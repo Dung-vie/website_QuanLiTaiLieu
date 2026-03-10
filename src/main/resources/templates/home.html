@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Quản Lý Tài Liệu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        .status-private { color: #dc3545; font-weight: bold; }
+        .status-pending { color: #ffc107; font-weight: bold; }
+        .status-public { color: #198754; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container my-5 bg-white p-4 rounded shadow">
+        <h2 class="mb-4">👋 Xin chào, <span th:text="${username}">Người dùng</span></h2>
+
+        <!-- Thông báo -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+
+        <!-- Form tìm kiếm -->
+        <form action="/documents" method="get" class="mb-5">
+            <div class="mb-3">
+                <label for="search" class="form-label">🔍 Tìm kiếm tài liệu:</label>
+                <input type="text" id="search" name="search" class="form-control" placeholder="Nhập tên tài liệu..." th:value="${search}" />
+            </div>
+            <div class="mb-3">
+                <label for="filterType" class="form-label">📁 Lọc theo loại file:</label>
+                <input type="text" id="filterType" name="filterType" class="form-control" placeholder="pdf, docx, jpg,..." th:value="${filterType}" />
+            </div>
+            <button type="submit" class="btn btn-info"><i class="fas fa-filter"></i> Tìm kiếm / Lọc</button>
+        </form>
+
+        <div class="mb-4 text-end">
+            <a href="/documents/upload" class="btn btn-primary"><i class="fas fa-upload"></i> Upload tài liệu</a>
+        </div>
+
+        <!-- Danh sách tài liệu -->
+        <h3 class="mb-3">📚 Danh Sách Tài Liệu</h3>
+        <div class="table-responsive rounded shadow-sm">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-primary">
+                    <tr>
+                        <th>STT</th>
+                        <th>Người đăng</th>
+                        <th>Tên File</th>
+                        <th>Thời Gian Upload</th>
+                        <th>Kiểu</th>
+                        <th>Kích Thước</th>
+                        <th>Trạng thái</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="document, iterStat : ${documents}">
+                        <!-- FIX: Sửa công thức tính STT -->
+                        <td th:text="${(currentPage - 1) * 10 + iterStat.index + 1}">1</td>
+                        <!-- FIX: Kiểm tra user null -->
+                        <td th:text="${document.user != null ? (document.user.id == currentUser.id ? 'Tôi' : document.user.username) : 'N/A'}">Người dùng</td>
+                        <td th:text="${document.filename}">Tên file</td>
+                        <td th:text="${document.timeUpload != null ? #temporals.format(document.timeUpload, 'dd/MM/yyyy HH:mm:ss') : 'N/A'}">--</td>
+                        <td th:text="${document.fileType}">Kiểu</td>
+                        <!-- FIX: Kiểm tra size null -->
+                        <td>
+                            <span th:if="${document.size != null and document.size >= 1024 * 1024}"
+                                th:text="${#numbers.formatDecimal(document.size / (1024.0 * 1024.0), 1, 2) + ' MB'}"></span>
+                            <span th:if="${document.size != null and document.size < 1024 * 1024}"
+                                th:text="${#numbers.formatDecimal(document.size / 1024.0, 1, 2) + ' KB'}"></span>
+                            <span th:if="${document.size == null}">N/A</span>
+                        </td>
+                        <td>
+                            <span th:switch="${document.status}">
+                                <span th:case="0" class="status-private">Private</span>
+                                <span th:case="1" class="status-pending">Pending approval...</span>
+                                <span th:case="2" class="status-public">Public</span>
+                            </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal"
+                                th:attr="data-bs-target='#previewModal_' + ${document.id}">
+                                <i class="fas fa-eye"></i> Xem trước
+                            </button>
+
+                            <!-- Modal xem trước -->
+                            <div class="modal fade" th:id="'previewModal_' + ${document.id}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Xem trước: <span th:text="${document.filename + '.' + document.fileType}"></span></h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <object th:attr="data=@{'/documents/preview/' + ${document.id}}" type="application/pdf" width="100%" height="600">
+                                                Tài liệu không xem trước được. <a th:href="@{'/documents/download/' + ${document.id}}">Tải về</a>
+                                            </object>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a th:href="@{'/documents/download/' + ${document.id}}" class="btn btn-sm btn-success" title="Tải về">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Phân trang được sửa -->
+        <nav th:if="${totalPages > 1}">
+            <ul class="pagination justify-content-center">
+                <!-- Previous -->
+                <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/documents(page=${currentPage - 2}, search=${search}, filterType=${filterType})}">← Trước</a>
+                </li>
+
+                <!-- Hiển thị tối đa 5 trang xung quanh trang hiện tại -->
+                <th:block th:with="startPage=${currentPage - 2 < 1 ? 1 : currentPage - 2}, endPage=${currentPage + 2 > totalPages ? totalPages : currentPage + 2}">
+                    <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{/documents(page=${i - 1}, search=${search}, filterType=${filterType})}"
+                           th:text="${i}">1</a>
+                    </li>
+                </th:block>
+
+                <!-- Next -->
+                <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/documents(page=${currentPage}, search=${search}, filterType=${filterType})}">Sau →</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Đăng xuất -->
+        <a href="/logout" class="btn btn-danger mt-4"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</body>
+</html>

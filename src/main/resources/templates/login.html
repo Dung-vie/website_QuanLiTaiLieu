@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Đăng nhập</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        /* Reset & base layout */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(120deg, #1f1c2c, #928dab);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* Card style */
+        .login-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+            width: 100%;
+            max-width: 400px;
+            color: #ffffff;
+        }
+
+        .login-card h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .form-label {
+            font-weight: 500;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            color: #fff;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .form-control::placeholder {
+            color: #e0e0e0;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 10px #fff;
+            color: #fff;
+        }
+
+        .btn-login {
+            width: 100%;
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover {
+            opacity: 0.9;
+            transform: scale(1.01);
+        }
+
+        .btn-register {
+            width: 100%;
+            border: 2px solid #ff416c;
+            background: transparent;
+            color: #ff416c;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 15px;
+            margin-top: 12px;
+            transition: 0.3s;
+        }
+
+        .btn-register:hover {
+            background: #ff416c;
+            color: white;
+        }
+
+        .text-danger {
+            color: #ff4d4d;
+            margin-top: 15px;
+        }
+
+        .text-muted {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #d0d0d0;
+        }
+
+        @media (max-width: 576px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+
+            .login-card h2 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <div class="login-form">
+            <h2>Đăng nhập</h2>
+            <form action="/login" method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Tài khoản</label>
+                    <input type="text" class="form-control" id="username" name="username" required
+                        placeholder="Nhập tài khoản" />
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mật khẩu</label>
+                    <input type="password" class="form-control" id="password" name="password" required
+                        placeholder="Nhập mật khẩu" />
+                </div>
+                <button type="submit" class="btn btn-login">Đăng nhập</button>
+                <a href="/register" class="btn btn-register">Chưa có tài khoản? Đăng ký</a>
+                <p th:if="${error}" class="text-danger" th:text="${error}"></p>
+            </form>
+            <p class="text-muted">Đăng nhập để sử dụng các tính năng của hệ thống</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Trạng thái duyệt tài liệu</title>
+<link
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+	rel="stylesheet">
+</head>
+<body class="bg-light">
+	<div class="container-fluid">
+		<div class="row">
+			<!-- Sidebar -->
+			<div th:replace="~{admin/sidebar :: adminSidebar}"></div>
+
+			<!-- Nội dung chính -->
+			<main role="main" class="col-md-10 offset-md-2 p-4">
+				<h2 class="mt-4">Danh sách tài liệu chờ phê duyệt</h2>
+
+				<div class="card shadow-sm">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-bordered table-hover">
+								<thead class="thead-light">
+									<tr>
+										<th>ID</th>
+										<th>Người dùng</th>
+										<th>Tên file</th>
+										<th>Kiểu file</th>
+										<th>Xem trước</th>
+										<th>Xem chi tiết</th>
+										<th>Actiom</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="doc : ${documents}">
+										<td th:text="${doc.id}">1</td>
+										<td
+											th:text="${doc.user != null ? doc.user.username : 'Không xác định'}">Người
+											dùng</td>
+										<td th:text="${doc.filename}">Tên file</td>
+										<td th:text="${doc.fileType}">pdf</td>
+										<td>
+										<a th:href="@{'/admin/documents/preview/' + ${doc.id}}"
+										   class="btn btn-sm btn-secondary">
+										   <i class="fas fa-eye"></i> Xem trước
+										</a>
+										</td>
+										<td><a
+											th:href="@{'/admin/documents/' + ${doc.id}}"
+											class="btn btn-sm btn-info"> <i
+												class="fas fa-info-circle"></i> Chi tiết
+										</a></td>
+
+										<td>
+											<form th:action="@{'/admin/documents/approve/' + ${doc.id}}"
+												method="post"
+												onsubmit="return confirm('Bạn có chắc chắn muốn phê duyệt tài liệu này?');">
+												<button type="submit" class="btn btn-success btn-sm">
+													<i class="fas fa-check"></i> Phê duyệt
+												</button>
+											</form>
+											<form
+												th:action="@{'/admin/documents/unapprove/' + ${doc.id}}"
+												method="post"
+												onsubmit="return confirm('Bạn có chắc chắn muốn từ chối tài liệu này?');">
+												<button type="submit" class="btn btn-danger btn-sm">
+													<i class="fas fa-times"></i> Từ chối
+												</button>
+											</form>
+										</td>
+									</tr>
+
+									<tr th:if="${#lists.isEmpty(documents)}">
+										<td colspan="8" class="text-center">Không có tài liệu chờ
+											phê duyệt</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+						<!-- Phân trang nếu cần -->
+						<nav th:if="${totalPages > 1}">
+							<ul class="pagination justify-content-center">
+								<li th:each="i : ${#numbers.sequence(1, totalPages)}"
+									th:classappend="${i == currentPage} ? 'active'"><a
+									class="page-link"
+									th:href="@{/admin/documents/status(page=${i})}" th:text="${i}">1</a>
+								</li>
+							</ul>
+						</nav>
+
+					</div>
+				</div>
+			</main>
+		</div>
+	</div>
+</body>
+</html>
+

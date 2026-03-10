@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Quản lý tài liệu</title>
+<link
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+	rel="stylesheet">
+	<style>
+		 .status-private {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .status-public {
+            color: #198754;
+            font-weight: bold;
+        }
+        .nav-link.active {
+	        background-color: #495057;
+	        border-radius: 5px;
+	    }
+	</style>
+</head>
+<body class="bg-light">
+	<div class="container-fluid">
+		<div class="row">
+			<!-- Sidebar -->
+			<div th:replace="~{admin/sidebar :: adminSidebar}"></div>
+
+			<!-- Nội dung chính -->
+			<main role="main" class="col-md-10 offset-md-2 p-4">
+				<h2 class="mt-4">Danh sách tài liệu</h2>
+
+				<!-- Form Tìm kiếm & Lọc -->
+				<div class="card mb-4 shadow-sm">
+					<div class="card-body">
+						<form action="#" method="get" class="row">
+							<div class="col-md-4">
+								<label><i class="fas fa-search"></i> Tìm kiếm theo tên</label> <input
+									type="text" name="search" class="form-control"
+									placeholder="Nhập tên tài liệu" th:value="${search}">
+							</div>
+							<div class="col-md-3">
+								<label><i class="fas fa-filter"></i> Lọc theo loại file</label>
+								<input type="text" name="filterType" class="form-control"
+									placeholder="pdf, docx, jpg..." th:value="${filterType}">
+							</div>
+							<div class="col-md-3">
+								<label><i class="fas fa-user"></i> Lọc theo người dùng</label> <select
+									name="userId" class="form-control">
+									<option value="">Tất cả người dùng</option>
+									<option th:each="user : ${users}" th:value="${user.id}"
+										th:text="${user.username}"
+										th:selected="${userId != null and userId == user.id}">
+									</option>
+								</select>
+							</div>
+							<div class="col-md-2 d-flex align-items-end">
+								<button class="btn btn-primary btn-block" type="submit">
+									<i class="fas fa-search"></i> Tìm kiếm
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<!-- Bảng danh sách tài liệu -->
+				<div class="card shadow-sm">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-bordered table-hover">
+								<thead class="thead-light">
+									<tr>
+										<th>ID</th>
+										<th>Tên file</th>
+										<th>Loại</th>
+										<th>Dung lượng</th>
+										<th>Ngày upload</th>
+										<th>Người dùng</th>
+										<th>Trạng thái</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="doc : ${documents}">
+										<td th:text="${doc.id}">1</td>
+										 <td>
+									      <a th:href="@{'/admin/documents/preview/' + ${doc.id}}" target="_blank" th:text="${doc.filename}">Tên</a>
+									    </td>
+										<td th:text="${doc.fileType}">pdf</td>
+										<td	th:text="${doc.size != null} ? ${#numbers.formatDecimal(doc.size / 1024.0, 1, 2)} : '-'">...</td>
+										<td
+											th:text="${#temporals.format(doc.timeUpload, 'dd/MM/yyyy HH:mm')}">...</td>
+										<td th:text="${doc.user != null ? doc.user.username : 'Không xác định'}"></td>
+										<td>
+				                            <span th:switch="${doc.status}">
+				                                <span th:case="0" class="status-private">Private</span>
+				                                <span th:case="1" class="status-pending">Pending approval...</span>
+				                                <span th:case="2" class="status-public">Public</span>
+				                            </span>
+				                        </td>
+										<td>
+											<a class="btn btn-sm btn-info"
+											th:href="@{'/admin/documents/download/' + ${doc.id}}">Tải về</a>
+											
+											<a class="btn btn-sm btn-warning"
+											   th:href="@{'/admin/documents/edit/' + ${doc.id}}">
+											   Sửa
+											</a>
+										
+											<form th:action="@{'/admin/documents/delete/' + ${doc.id}}" method="post"
+											      th:object="${doc}" style="display:inline"
+											      onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài liệu này?');">
+											    <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+											</form>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+							<!-- Phân trang -->
+							<nav th:if="${totalPages > 1}">
+								<ul class="pagination justify-content-center">
+									<li th:each="i : ${#numbers.sequence(1, totalPages)}"
+										th:classappend="${i == currentPage} ? 'active'"><a
+										class="page-link"
+										th:href="@{/admin/documents(page=${i}, search=${search}, filterType=${filterType}, userId=${userId})}"
+										th:text="${i}">1</a></li>
+								</ul>
+							</nav>
+					</div>
+				</div>
+			</main>
+		</div>
+	</div>
+</body>
+</html>
+

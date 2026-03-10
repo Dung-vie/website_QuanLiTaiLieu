@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Chi tiết tài liệu</title>
+<link
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+	rel="stylesheet">
+</head>
+<body class="bg-light">
+	<div class="container-fluid">
+		<div class="row">
+			<!-- Sidebar -->
+			<div th:replace="~{admin/sidebar :: adminSidebar}"></div>
+
+			<!-- Nội dung chính -->
+			<main role="main" class="col-md-10 offset-md-2 p-4">
+
+		<h3>Chi tiết tài liệu</h3>
+		<table class="table table-bordered">
+			<tr>
+				<th>Tên tài liệu:</th>
+				<td th:text="${document.filename}">Tên</td>
+			</tr>
+			<tr>
+				<th>Loại tệp:</th>
+				<td th:text="${document.fileType}">PDF</td>
+			</tr>
+			<tr>
+				<th>Kích thước:</th>
+				<td th:text="${document.size} + ' MB'">0 MB</td>
+			</tr>
+			<tr>
+				<th>Thời gian tải lên:</th>
+				<td th:text="${formattedTimeUpload}">...</td>
+			</tr>
+			<tr>
+				<th>Trạng thái:</th>
+				<td><span th:switch="${document.status}"> <span
+						th:case="0">Riêng tư</span> <span th:case="1">Chờ duyệt</span> <span
+						th:case="2">Công khai</span> <span th:case="*">Không xác
+							định</span>
+				</span></td>
+			</tr>
+			<tr>
+				<th>Người tải lên:</th>
+				<td th:text="${document.user.username}">username</td>
+			</tr>
+			<tr>
+				<th>Đường dẫn file:</th>
+				<td th:text="${document.filePath}">/files/...</td>
+			</tr>
+			<tr>
+				<th>Tên đầy đủ:</th>
+				<td th:text="${document.filename + '.' + document.fileType}">tên.định_dạng</td>
+			</tr>
+		</table>
+
+		<a th:href="@{/admin/documents/status}" class="btn btn-secondary">Quay
+			lại</a>
+			</main>
+		</div>
+	</div>
+</body>
+</html>

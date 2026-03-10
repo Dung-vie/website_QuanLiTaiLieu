@@ -1,0 +1,37 @@
+
+<div th:fragment="adminSidebar">
+    <div class="col-md-2 bg-dark text-white py-3 min-vh-100 position-fixed">
+        <div class="text-center mb-4">
+            <a href="/admin" class="d-flex align-items-center text-white text-decoration-none">
+                <img th:src="@{/imgs/img_tdc.png}" alt="logo" width="70" class="me-2">
+            </a>
+            <h2>
+			<h4> Xin chào, Admin</h4>
+		</h2>
+        </div>
+        <hr class="bg-secondary">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active text-light" href="/admin"><i class="fas fa-tachometer-alt mr-2"></i> Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light-50" href="/admin/users"><i class="fas fa-users mr-2"></i> Người dùng</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light-50" href="/admin/documents"><i class="fas fa-file-alt mr-2"></i> Tài liệu</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light-50" href="/admin/documents/uploads"><i class="fas fa-upload mr-2"></i> Uploads</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light-50" href="/admin/roles"><i class="fas fa-user-tag mr-2"></i> Vai trò</a>
+            </li>
+             <li class="nav-item">
+                <a class="nav-link text-light-50" href="/admin/documents/status"><i class="fas fa-user-tag mr-2"></i>Phê duyệt tài liệu</a>
+            </li>
+            <li class="nav-item mt-5">
+                <a class="nav-link text-danger" href="/logout"><i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất</a>
+            </li>
+        </ul>
+    </div>
+</div>

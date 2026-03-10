@@ -1,0 +1,3 @@
+1. Lỗi tự tắt màn hình (Khi đang sử dụng màn thỉnh thoảng tự tắt, ấn space nó mới hiện lên)
+2. Lỗi nút window (Nút window không sử dụng được)
+3.Máy giựt (Dùng

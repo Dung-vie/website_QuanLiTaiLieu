@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chỉnh sửa tài liệu</title>
+    <link
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+	rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+   <div th:replace="~{admin/sidebar :: adminSidebar}"></div>
+
+    <!-- Nội dung chính -->
+    <div class="col-md-10 offset-md-2 p-4">
+        <h2 class="mb-4">Chỉnh sửa tài liệu</h2>
+
+        <!-- Thông báo lỗi -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <!-- Thông báo thành công -->
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+
+        <form th:action="@{'/admin/documents/edit/' + ${document.id}}" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Tên tài liệu :</label>
+                <input type="text" name="filename" class="form-control" th:value="${document.filename}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Tệp mới (nếu muốn thay thế):</label>
+                <input type="file" name="file" class="form-control">
+                <small class="form-text text-muted">Nếu không chọn, hệ thống sẽ giữ nguyên file cũ.</small>
+            </div>
+
+            <div class="mb-3">
+			    <label class="form-label">Người dùng:</label>
+			    <input type="text" class="form-control" th:value="${document.user.username}" readonly>
+			</div>
+			<input type="hidden" name="userId" th:value="${document.user.id}" />
+			
+			<div class="mb-3">
+			    <label class="form-label">Trạng thái:</label>
+			    <select class="form-select" name="status">
+			        <option value="0" th:selected="${document.status == 0}">Private</option>
+			        <option value="2" th:selected="${document.status == 2}">Public</option>
+			    </select>
+			</div>
+
+            <button type="submit" class="btn btn-primary">Cập nhật</button>
+            <a th:href="@{/admin/documents}" class="btn btn-secondary">Quay lại</a>
+        </form>
+    </div>
+</body>
+</html>

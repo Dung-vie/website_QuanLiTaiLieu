@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Quản Lý Người Dùng</title>
+<link
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+	rel="stylesheet">
+</head>
+
+<body class="bg-light">
+	<div class="container-fluid">
+		<div class="row">
+			<!-- Sidebar -->
+			<div th:replace="~{admin/sidebar :: adminSidebar}"></div>
+			<main role="main" class="col-md-10 offset-md-2 p-4">
+				<h2 class="mt-4">Danh sách người dùng</h2>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Tên người dùng</th>
+							<th>Vai trò</th>
+							<th>Tổng số tài liệu</th>
+							<th>Tổng số kiểu file</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="user : ${users}">
+							<td th:text="${user.id}">1</td>
+							<td th:text="${user.username}">Tên</td>
+							<td th:text="${user.role}">role</td>
+							<td th:text="${fileCounts[user.id]}">0</td>
+							<td th:text="${fileTypeCounts[user.id]}">0</td>
+							<td><form th:action="@{'/admin/users/delete/' + ${user.id}}"
+									method="post" style="display: inline"
+									onsubmit="return confirm('Xóa người dùng này?');">
+									<button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+								</form></td>
+						</tr>
+					</tbody>
+				</table>
+				<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+				<div th:if="${success}" class="alert alert-success"
+					th:text="${success}"></div>
+		</div>
+
+	</div>
+	</div>
+</body>
+
+</html>

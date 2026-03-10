@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quản lý vai trò</title>
+    <link
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+	rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div th:replace="~{admin/sidebar :: adminSidebar}"></div>
+
+        <div class="col-md-10 offset-md-2 p-4">
+            <h3 class="mb-4">Quản lý vai trò người dùng</h3>
+
+            <!-- Thông báo -->
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <table class="table table-hover table-bordered">
+                <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Tên người dùng</th>
+                    <th>Vai trò hiện tại</th>
+                    <th>Thay đổi vai trò</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.username}"></td>
+                    <td th:text="${user.role}"></td>
+                    <td>
+                        <form th:action="@{/admin/roles}" method="post" class="form-inline">
+                            <input type="hidden" name="userId" th:value="${user.id}" />
+                            <select name="newRole" class="form-control mr-2">
+                                <option value="USER" th:selected="${user.role == 'USER'}">USER</option>
+                                <option value="ADMIN" th:selected="${user.role == 'ADMIN'}">ADMIN</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary btn-sm">Cập nhật</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
